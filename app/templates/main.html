@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Transformer</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        #top-banner {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px 10px;
+            text-align: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        #user-info {
+            text-align: right;
+            padding: 10px;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+        }
+
+
+        #user-info p {
+            margin-right: 10px;
+        }
+
+
+        #pages {
+            text-align: left;
+            padding: 10px;
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            align-items: center;
+        }
+        #pages p {
+            margin-left: 10px;
+        }
+
+        #content {
+            margin-top: 100px;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="top-banner">
+        <div id="pages">
+            <p><a href="/" class="nav-link">Transform Images</a></p>
+            <p><a href="/users" class="nav-link">Users</a></p>
+        </div>
+
+        <div id="user-info">
+            <p id="user-name">No user logged in</p>
+            <button onclick="changeUser()">Switch User</button>
+        </div>
+    </div>
+
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
+
+    <script>
+        function changeUser() {
+            const user_id = prompt("Enter user ID to switch:");
+            if (user_id) {
+                fetch("/switch_user", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({ user_id: parseInt(user_id) })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("user-name").innerText = "User: " + data.user_name;
+                });
+            }
+        }
+        window.onload = function() {
+            console.log('hello')
+            fetch("/get_user_info")
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data)
+                    document.getElementById("user-name").innerText = "User: " + data.user_name;
+                })
+                .catch(error => console.error("Error fetching user info:", error));
+        };
+    </script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-from app.models.vgg_style_transfer import transfer_style
+from app.nn_models.vgg_style_transfer import transfer_style
 from .base import Transformation
 from PIL import Image
 import numpy as np
