@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Image Transformer</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Image Transformer</h1>
+    
+    <form id="uploadForm">
+      <input type="file" id="imageInput" accept="image/*" />
+      <button type="submit">Upload</button>
+    </form>
+    
+    <!-- Элемент для отображения изображения -->
+    <div id="imagePreview">
+      <img id="previewImage" src="" alt="Image Preview" style="display:none; max-width: 100%;"/>
+    </div>
+
+    <div id="result">
+      <!-- Результаты загрузки изображения -->
+    </div>
+
+    <!-- Блок для применения фильтров -->
+    <div id="filtersSection" style="display:none;">
+      <h2>Apply Filter</h2>
+      <select id="filterSelect">
+        <option value="grayscale">Grayscale</option>
+        <option value="sepia">Sepia</option>
+        <option value="invert">Invert Colors</option>
+      </select>
+      <button id="applyFilterBtn">Apply Filter</button>
+    </div>
+
+    <!-- Блок для изменения яркости, контрастности и насыщенности -->
+    <div id="adjustmentSection" style="display:none;">
+      <h2>Adjust Image</h2>
+
+      <label for="brightness">Brightness:</label>
+      <input type="range" id="brightness" min="0" max="2" step="0.1" value="1" />
+      <br/>
+
+      <label for="contrast">Contrast:</label>
+      <input type="range" id="contrast" min="0" max="2" step="0.1" value="1" />
+      <br/>
+
+      <label for="saturation">Saturation:</label>
+      <input type="range" id="saturation" min="0" max="2" step="0.1" value="1" />
+      <br/>
+
+      <button id="applyAdjustmentsBtn">Apply Adjustments</button>
+
+      <div id="transformationsSection">
+        <button id="applyTransformationsBtn">Apply Transformations</button>
+      </div>
+      
+    </div>
+
+    <div id="styleTransferSection">
+      <h2>Style Transfer</h2>
+      <form id="styleTransferForm" enctype="multipart/form-data">
+        <label for="contentImage">Content Image:</label>
+        <input type="file" id="contentImage" name="content_file" accept="image/*" required />
+        
+        <label for="styleImage">Style Image:</label>
+        <input type="file" id="styleImage" name="style_file" accept="image/*" required />
+        
+        <button type="submit">Apply Style</button>
+      </form>
+    
+      <div id="styledImageResult">
+        <h3>Styled Image:</h3>
+        <img id="styledImage" src="" alt="Styled Image" style="max-width: 100%;" />
+      </div>
+    </div>
+    
+
+    <!-- Блок для отображения изображения после применения изменений -->
+    <div id="filteredResultSection" style="display:none;">
+      <h2>Modified Image</h2>
+      <img id="modifiedImage" src="" alt="Modified Image" style="max-width: 100%;" />
+    </div>
+  </div>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
