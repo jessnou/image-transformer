@@ -1,5 +1,5 @@
 from fastapi import FastAPI, Form, File, UploadFile, Request
-from fastapi.responses import HTMLResponse, JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse, StreamingResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from PIL import Image, ImageOps, ImageEnhance
@@ -62,17 +62,15 @@ async def apply_adjustments(file: UploadFile = File(...), brightness: float = Fo
         enhancer = ImageEnhance.Color(image)
         image = enhancer.enhance(saturation)
 
-        # Сохраняем измененное изображение
-        filename = f"{uuid4()}.png"
-        modified_image_path = os.path.join("app/static", filename)
-        image.save(modified_image_path)
+        # Конвертируем изображение в байты
+        image_bytes = io.BytesIO()
+        image.save(image_bytes, format="PNG")
+        image_bytes.seek(0)
 
-        return JSONResponse(content={
-            "modified_image_url": f"/static/{filename}"
-        })
-
+        # Возвращаем изображение как StreamingResponse
+        return StreamingResponse(image_bytes, media_type="image/png")
     except Exception as e:
-        return JSONResponse(content={"error": str(e)}, status_code=400)
+        return {"error": str(e)}
 
 @app.post("/apply-filter/")
 async def apply_filter(file: UploadFile = File(...), filter: str = Form(...)):
@@ -91,13 +89,12 @@ async def apply_filter(file: UploadFile = File(...), filter: str = Form(...)):
             image = ImageOps.invert(image.convert("RGB"))
 
         # Сохраняем отфильтрованное изображение
-        filename = f"{uuid4()}.png"
-        filtered_image_path = os.path.join("app/static", filename)
-        image.save(filtered_image_path)
+        image_bytes = io.BytesIO()
+        image.save(image_bytes, format="PNG")
+        image_bytes.seek(0)
 
-        return JSONResponse(content={
-            "filtered_image_url": f"/static/{filename}"
-        })
+        # Возвращаем изображение как StreamingResponse
+        return StreamingResponse(image_bytes, media_type="image/png")
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
@@ -123,14 +120,14 @@ async def apply_transformations(
         for transformation in transformation_objects:
             image = transformation.apply(image)
 
-        # Сохраняем результат
-        filename = f"{uuid4()}.png"
-        modified_image_path = os.path.join("app/static", filename)
-        image.save(modified_image_path)
+        
+        # Сохраняем отфильтрованное изображение
+        image_bytes = io.BytesIO()
+        image.save(image_bytes, format="PNG")
+        image_bytes.seek(0)
 
-        return JSONResponse(content={
-            "filtered_image_url": f"/static/{filename}"
-        })
+        # Возвращаем изображение как StreamingResponse
+        return StreamingResponse(image_bytes, media_type="image/png")
 
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)
@@ -160,12 +157,13 @@ async def style_transfer(
         })
 
         result_image = style_transfer.apply(content_image, style_image)
+        
+        # Сохраняем отфильтрованное изображение
+        image_bytes = io.BytesIO()
+        result_image.save(image_bytes, format="PNG")
+        image_bytes.seek(0)
 
-        # Сохранение результата
-        filename = f"{uuid4()}.png"
-        result_path = os.path.join("app/static/uploads", filename)
-        result_image.save(result_path)
-
-        return JSONResponse(content={"styled_image_url": f"/static/uploads/{filename}"})
+        # Возвращаем изображение как StreamingResponse
+        return StreamingResponse(image_bytes, media_type="image/png")
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=400)

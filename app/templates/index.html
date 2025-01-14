@@ -52,29 +52,20 @@
       <br/>
 
       <button id="applyAdjustmentsBtn">Apply Adjustments</button>
-
-      <div id="transformationsSection">
-        <button id="applyTransformationsBtn">Apply Transformations</button>
-      </div>
-      
     </div>
 
-    <div id="styleTransferSection">
+    <div id="styleTransferSection" style="display:none;">
       <h2>Style Transfer</h2>
-      <form id="styleTransferForm" enctype="multipart/form-data">
-        <label for="contentImage">Content Image:</label>
-        <input type="file" id="contentImage" name="content_file" accept="image/*" required />
-        
+      <form id="styleTransferForm" enctype="multipart/form-data">        
         <label for="styleImage">Style Image:</label>
         <input type="file" id="styleImage" name="style_file" accept="image/*" required />
         
         <button type="submit">Apply Style</button>
       </form>
-    
-      <div id="styledImageResult">
-        <h3>Styled Image:</h3>
-        <img id="styledImage" src="" alt="Styled Image" style="max-width: 100%;" />
-      </div>
+    </div>
+
+    <div id="transformationsSection" style="display:none;">
+      <button id="applyTransformationsBtn">Apply Transformations</button>
     </div>
     
 

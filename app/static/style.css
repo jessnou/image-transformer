@@ -45,6 +45,10 @@ body {
   #filteredResultSection {
     margin-top: 20px;
   }
+
+  #transformationsSection {
+    margin-top: 20px;
+  }
   
 
   /* Общие стили для контейнера */

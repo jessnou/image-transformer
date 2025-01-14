@@ -25,6 +25,8 @@ document.getElementById("uploadForm").addEventListener("submit", async (event) =
       currentImage = originalImage;
       document.getElementById("adjustmentSection").style.display = "block"; // Показываем секцию с ползунками
       document.getElementById("filtersSection").style.display = "block"; // Показываем секцию с ползунками
+      document.getElementById("transformationsSection").style.display = "block"; // Показываем секцию с ползунками
+      document.getElementById("styleTransferSection").style.display = "block"; // Показываем секцию с ползунками
     }
   };
   reader.readAsDataURL(file);
@@ -54,19 +56,12 @@ document.getElementById("applyAdjustmentsBtn").addEventListener("click", async (
       throw new Error("Failed to apply adjustments.");
     }
 
-    const result = await response.json();
-    displayModifiedImage(result);
+    displayFilteredImagev2(response)
   } catch (error) {
     console.error("Error:", error);
     alert("An error occurred while applying adjustments.");
   }
 });
-
-function displayModifiedImage(data) {
-  const modifiedImage = document.getElementById("modifiedImage");
-  modifiedImage.src = data.modified_image_url;
-  document.getElementById("filteredResultSection").style.display = "block"; // Показываем результат изменений
-}
 
 document.getElementById("applyFilterBtn").addEventListener("click", async () => {
   const filter = document.getElementById("filterSelect").value;
@@ -93,8 +88,7 @@ document.getElementById("applyFilterBtn").addEventListener("click", async () => 
       throw new Error("Failed to apply filter.");
     }
 
-    const result = await response.json();
-    displayFilteredImage(result);
+    displayFilteredImagev2(response);
   } catch (error) {
     console.error("Error:", error);
     alert("An error occurred while applying the filter.");
@@ -106,6 +100,21 @@ function displayFilteredImage(data) {
   filteredImage.src = data.filtered_image_url;
   document.getElementById("filteredResultSection").style.display = "block"; // Показываем результат фильтрации
 }
+
+
+async function displayFilteredImagev2(response) {
+  const blob = await response.blob();
+
+  // Создаем URL для временного использования
+  const imageUrl = URL.createObjectURL(blob);
+
+  // Отображаем изображение
+  const imgElement = document.getElementById("modifiedImage");
+  imgElement.src = imageUrl;
+
+  document.getElementById("filteredResultSection").style.display = "block"; // Показываем результат фильтрации
+}
+
 
 document.getElementById("applyTransformationsBtn").addEventListener("click", async () => {
 
@@ -132,8 +141,11 @@ document.getElementById("applyTransformationsBtn").addEventListener("click", asy
       body: formData
   });
 
-  const data = await response.json();
-  displayFilteredImage(data)
+  if (!response.ok) {
+    throw new Error("Failed to apply filter.");
+  }
+
+  displayFilteredImagev2(response);
 });
 
 
@@ -141,16 +153,18 @@ document.getElementById("styleTransferForm").addEventListener("submit", async (e
   event.preventDefault();
   
   const formData = new FormData(event.target);
+  const fileInput = document.getElementById("imageInput");
+  const file = fileInput.files[0];
+  formData.append("content_file", file);
 
   const response = await fetch("/apply-style-transfer/", {
     method: "POST",
     body: formData,
   });
 
-  const data = await response.json();
-  if (data.styled_image_url) {
-    document.getElementById("styledImage").src = data.styled_image_url;
-  } else {
-    alert("Error: " + data.error);
+  if (!response.ok) {
+    throw new Error("Failed to apply filter.");
   }
+
+  displayFilteredImagev2(response);
 });
