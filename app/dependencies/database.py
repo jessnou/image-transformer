@@ -5,3 +5,7 @@ from app.db_connection.connection import Connection
 def get_postgres_session():
     connection = DatabaseFactory.create("pg")
     return connection.apply()
+
+def get_mongo_db():
+    mongo_connection = DatabaseFactory.create('mongo')
+    return mongo_connection.apply()

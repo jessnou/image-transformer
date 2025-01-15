@@ -1,4 +1,5 @@
 from app.nn_models.vgg_style_transfer import transfer_style
+from app.decorators.save_transformation import save_to_mongo
 from .base import Transformation
 from PIL import Image
 import numpy as np
@@ -10,6 +11,7 @@ class StyleTransfer(Transformation):
         self.style_weight = style_weight
         self.lr = lr
 
+    @save_to_mongo
     def apply(self, content_image: Image.Image, style_image: Image.Image) -> Image.Image:
         result_tensor = transfer_style(
             content_image, style_image,

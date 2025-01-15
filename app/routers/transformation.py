@@ -38,7 +38,6 @@ async def upload_image(file: UploadFile = File(...)):
         return JSONResponse(content={"error": str(e)}, status_code=400)
 
 @router.post("/apply-adjustments/")
-@save_to_mongo
 async def apply_adjustments(
     file: UploadFile = File(...),
     brightness: float = Form(...),
@@ -71,7 +70,6 @@ async def apply_adjustments(
         return {"error": str(e)}
 
 @router.post("/apply-filter/")
-@save_to_mongo 
 async def apply_filter(file: UploadFile = File(...), filter: str = Form(...)):
     try:
         # Читаем изображение
@@ -99,7 +97,6 @@ async def apply_filter(file: UploadFile = File(...), filter: str = Form(...)):
     
 
 @router.post("/apply-transformations/")
-@save_to_mongo 
 async def apply_transformations(
     file: UploadFile = File(...),
     transformations: str = Form(...)
@@ -133,7 +130,6 @@ async def apply_transformations(
 
 
 @router.post("/apply-style-transfer/")
-@save_to_mongo 
 async def style_transfer(
     content_file: UploadFile = File(...),
     style_file: UploadFile = File(...),

@@ -1,20 +1,32 @@
-import mongoengine as me
+from bson import Binary
+from pymongo import MongoClient
 
-class Image(me.Document):
-    filename = me.StringField(required=True)
-    image_data = me.BinaryField(required=True)
-    format = me.StringField(required=True)
-    size = me.DictField(required=True)  # Словарь для хранения размеров изображения
-    url = me.StringField()
+class Image:
+    def __init__(self, db):
+        """
+        Инициализация класса Image.
+        :param db: Экземпляр базы данных MongoDB.
+        """
+        self.collection = db['images']  # Коллекция для хранения изображений
 
-    meta = {
-        'collection': 'images'
-    }
+    def save_image(self, image_data, filename, format, size, url=None):
+        """
+        Сохраняет изображение в коллекцию MongoDB.
+        :param image_data: Бинарные данные изображения.
+        :param filename: Имя файла.
+        :param format: Формат изображения (например, 'png', 'jpg').
+        :param size: Словарь с размерами изображения (например, {'width': 800, 'height': 600}).
+        :param url: URL изображения (опционально).
+        """
+        # Создаем документ для сохранения
+        image_document = {
+            'filename': filename,
+            'image_data': Binary(image_data),  # Преобразуем данные в бинарный формат
+            'format': format,
+            'size': size,
+            'url': url
+        }
 
-    def save_image(self, image_data, filename, format, size, url):
-        self.filename = filename
-        self.image_data = image_data
-        self.format = format
-        self.size = size
-        self.url = url
-        self.save()
+        # Вставляем документ в коллекцию
+        result = self.collection.insert_one(image_document)
+        return result.inserted_id  # Возвращаем ID сохраненного документа
